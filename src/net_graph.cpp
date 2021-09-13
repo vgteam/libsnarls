@@ -48,7 +48,7 @@ void NetGraph::add_unary_child(const Snarl* unary) {
     handle_t snarl_bound = graph->get_handle(unary->start().node_id(), unary->start().backward());
         
     // Get its ID
-    id_t snarl_id = unary->start().node_id();
+    nid_t snarl_id = unary->start().node_id();
         
     // Make sure it is properly specified to be unary (in and out the same node in opposite directions)
     assert(unary->end().node_id() == snarl_id);
@@ -161,16 +161,16 @@ void NetGraph::add_chain_child(const Chain& chain) {
     }
 }
 
-bool NetGraph::has_node(id_t node_id) const {
+bool NetGraph::has_node(nid_t node_id) const {
     return graph->has_node(node_id);
 }
     
-handle_t NetGraph::get_handle(const id_t& node_id, bool is_reverse) const {
+handle_t NetGraph::get_handle(const nid_t& node_id, bool is_reverse) const {
     // We never let anyone see any node IDs that aren't assigned to child snarls/chains or content nodes.
     return graph->get_handle(node_id, is_reverse);
 }
     
-id_t NetGraph::get_id(const handle_t& handle) const {
+nid_t NetGraph::get_id(const handle_t& handle) const {
     // We just use the handle/ID mapping of the backing graph
     return graph->get_id(handle);
 }
@@ -581,7 +581,7 @@ bool NetGraph::for_each_handle_impl(const function<bool(const handle_t&)>& itera
     // We let both the starts and ends of child snarls into the queue.
     // But we'll only reveal the starts to our iteratee.
     list<handle_t> queue;
-    unordered_set<id_t> queued;
+    unordered_set<nid_t> queued;
         
     // We define a function to queue up nodes we could visit next
     auto see_node = [&](const handle_t& other) {
@@ -726,18 +726,18 @@ size_t NetGraph::get_node_count() const {
     return size;
 }
 
-id_t NetGraph::min_node_id() const {
+nid_t NetGraph::min_node_id() const {
     // TODO: this is inefficient!
-    id_t winner = numeric_limits<id_t>::max();
+    nid_t winner = numeric_limits<nid_t>::max();
     for_each_handle([&](const handle_t& handle) {
             winner = min(winner, this->get_id(handle));
         });
     return winner;
 }
 
-id_t NetGraph::max_node_id() const {
+nid_t NetGraph::max_node_id() const {
     // TODO: this is inefficient!
-    id_t winner = numeric_limits<id_t>::min();
+    nid_t winner = numeric_limits<nid_t>::min();
     for_each_handle([&](const handle_t& handle) {
             winner = max(winner, this->get_id(handle));
         });

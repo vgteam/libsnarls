@@ -1,10 +1,8 @@
 #include "snarls/snarl.hpp"
 
-namespace snarls {
+namespace vg {
 
 using namespace std;
-using namespace vg;
-using namespace handlegraph;
 
 bool operator==(const Snarl& a, const Snarl& b) {
     if (a.type() != b.type()) {

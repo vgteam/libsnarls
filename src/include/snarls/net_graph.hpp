@@ -1,6 +1,8 @@
 #ifndef LIBSNARLS_NET_GRAPH_HPP_INCLUDED
 #define LIBSNARLS_NET_GRAPH_HPP_INCLUDED
 
+#include "snarls/chain.hpp"
+
 #include <handlegraph/handle_graph.hpp>
 
 #include <vg/vg.pb.h>
@@ -102,13 +104,13 @@ public:
              bool use_internal_connectivity = false);
 
     /// Method to check if a node exists by ID
-    virtual bool has_node(id_t node_id) const;
+    virtual bool has_node(nid_t node_id) const;
     
     /// Look up the handle for the node with the given ID in the given orientation
-    virtual handle_t get_handle(const id_t& node_id, bool is_reverse = false) const;
+    virtual handle_t get_handle(const nid_t& node_id, bool is_reverse = false) const;
         
     /// Get the ID from a handle
-    virtual id_t get_id(const handle_t& handle) const;
+    virtual nid_t get_id(const handle_t& handle) const;
         
     /// Get the orientation of a handle
     virtual bool get_is_reverse(const handle_t& handle) const;
@@ -136,16 +138,16 @@ public:
     virtual size_t get_node_count() const;
     
     /// Return the smallest ID used. 
-    virtual id_t min_node_id() const;
+    virtual nid_t min_node_id() const;
     
     /// Return the largest ID used.
-    virtual id_t max_node_id() const;
+    virtual nid_t max_node_id() const;
         
     // We also have some extra functions
         
     /// Get the inward-facing start handle for this net graph. Useful when
     /// working with traversals.
-    const handle_t& get_start() const;vector
+    const handle_t& get_start() const;
         
     /// Get the outward-facing end handle for this net graph. Useful when
     /// working with traversals.
@@ -205,7 +207,7 @@ protected:
         
     // Stores whether a chain or unary snarl, identified by the ID of its
     // start handle, is left-left, right-right, or left-right connected.
-    unordered_map<id_t, tuple<bool, bool, bool>> connectivity;
+    unordered_map<nid_t, tuple<bool, bool, bool>> connectivity;
         
 };
     

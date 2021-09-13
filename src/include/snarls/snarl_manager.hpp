@@ -9,6 +9,7 @@
 #include <vector>
 #include <deque>
 #include <unordered_map>
+#include <random>
 
 namespace snarls {
 
@@ -153,12 +154,12 @@ public:
         
     /// Returns the Nodes and Edges contained in this Snarl but not in any child Snarls (always includes the
     /// Nodes that form the boundaries of child Snarls, optionally includes this Snarl's own boundary Nodes)
-    pair<unordered_set<id_t>, unordered_set<edge_t> > shallow_contents(const Snarl* snarl, const HandleGraph& graph,
+    pair<unordered_set<nid_t>, unordered_set<edge_t> > shallow_contents(const Snarl* snarl, const HandleGraph& graph,
                                                                        bool include_boundary_nodes) const;
         
     /// Returns the Nodes and Edges contained in this Snarl, including those in child Snarls (optionally
     /// includes Snarl's own boundary Nodes)
-    pair<unordered_set<id_t>, unordered_set<edge_t> > deep_contents(const Snarl* snarl, const HandleGraph& graph,
+    pair<unordered_set<nid_t>, unordered_set<edge_t> > deep_contents(const Snarl* snarl, const HandleGraph& graph,
                                                                     bool include_boundary_nodes) const;
         
     /// Look left from the given visit in the given graph and gets all the

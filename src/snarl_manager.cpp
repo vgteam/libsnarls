@@ -713,12 +713,12 @@ void SnarlManager::regularize() {
     
 }
     
-pair<unordered_set<id_t>, unordered_set<edge_t> > SnarlManager::shallow_contents(const Snarl* snarl, const HandleGraph& graph,
+pair<unordered_set<nid_t>, unordered_set<edge_t> > SnarlManager::shallow_contents(const Snarl* snarl, const HandleGraph& graph,
                                                                                  bool include_boundary_nodes) const {
     
-    pair<unordered_set<id_t>, unordered_set<edge_t> > to_return;
+    pair<unordered_set<nid_t>, unordered_set<edge_t> > to_return;
         
-    unordered_set<id_t> already_stacked;
+    unordered_set<nid_t> already_stacked;
         
     // initialize stack for DFS traversal of site
     vector<handle_t> stack;
@@ -781,7 +781,7 @@ pair<unordered_set<id_t>, unordered_set<edge_t> > SnarlManager::shallow_contents
             // this node points into a snarl
                 
             // What's on the other side of the snarl?
-            id_t other_id = forward_snarl->start().node_id() == graph.get_id(node) ? forward_snarl->end().node_id() : forward_snarl->start().node_id();
+            nid_t other_id = forward_snarl->start().node_id() == graph.get_id(node) ? forward_snarl->end().node_id() : forward_snarl->start().node_id();
                 
             // stack up the node on the opposite side of the snarl
             // rather than traversing it
@@ -796,7 +796,7 @@ pair<unordered_set<id_t>, unordered_set<edge_t> > SnarlManager::shallow_contents
             // the reverse of this node points into a snarl
                 
             // What's on the other side of the snarl?
-            id_t other_id = backward_snarl->end().node_id() == graph.get_id(node) ? backward_snarl->start().node_id(): backward_snarl->end().node_id();
+            nid_t other_id = backward_snarl->end().node_id() == graph.get_id(node) ? backward_snarl->start().node_id(): backward_snarl->end().node_id();
                 
             // stack up the node on the opposite side of the snarl
             // rather than traversing it
@@ -843,12 +843,12 @@ pair<unordered_set<id_t>, unordered_set<edge_t> > SnarlManager::shallow_contents
     return to_return;
 }
     
-pair<unordered_set<id_t>, unordered_set<edge_t> > SnarlManager::deep_contents(const Snarl* snarl, const HandleGraph& graph,
+pair<unordered_set<nid_t>, unordered_set<edge_t> > SnarlManager::deep_contents(const Snarl* snarl, const HandleGraph& graph,
                                                                               bool include_boundary_nodes) const {
         
-    pair<unordered_set<id_t>, unordered_set<edge_t> > to_return;
+    pair<unordered_set<nid_t>, unordered_set<edge_t> > to_return;
         
-    unordered_set<id_t> already_stacked;
+    unordered_set<nid_t> already_stacked;
         
     // initialize stack for DFS traversal of site
     vector<handle_t> stack;

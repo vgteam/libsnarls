@@ -1,5 +1,7 @@
 #include "snarls/chain.hpp"
 
+#include "snarls/visit.hpp"
+
 namespace snarls {
 
 using namespace std;

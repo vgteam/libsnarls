@@ -11,23 +11,31 @@ namespace snarls {
 
 using namespace std;
 using namespace vg;
+using namespace handlegraph;
 
 /// Make a Visit from a node ID and an orientation
-inline Visit to_visit(id_t node_id, bool is_reverse);
+inline Visit to_visit(nid_t node_id, bool is_reverse);
     
 /// Make a Visit from a snarl to traverse
 inline Visit to_visit(const Snarl& snarl);
 
 /// Make a Visit from a handle in a HandleGraph.
-inline Visit to_visit(const handlegraph::HandleGraph& graph, const handle_t& handle);
+inline Visit to_visit(const HandleGraph& graph, const handle_t& handle);
     
 /// Get the reversed version of a visit
 inline Visit reverse(const Visit& visit);
 
 /// Make an edge_t from a pair of visits
-edge_t to_edge(const handlegraph::HandleGraph& graph, const Visit& v1, const Visit& v2);
+edge_t to_edge(const HandleGraph& graph, const Visit& v1, const Visit& v2);
 
-// We need some Visit operators
+}
+
+namespace vg {
+
+using namespace std;
+
+// Visit operators need to be put in the vg namespace, where the Snarl type is,
+// or they will not be found.
     
 /**
  * Two Visits are equal if they represent the same traversal of the same
@@ -50,12 +58,20 @@ bool operator<(const Visit& a, const Visit& b);
  * A Visit can be printed.
  */
 ostream& operator<<(ostream& out, const Visit& visit);
+
+}
+
+namespace snarls {
+
+using namespace std;
+using namespace vg;
+using namespace handlegraph;
     
 /****
  * Template and Inlines:
  ****/
     
-inline Visit to_visit(id_t node_id, bool is_reverse) {
+inline Visit to_visit(nid_t node_id, bool is_reverse) {
     Visit to_return;
     to_return.set_node_id(node_id);
     to_return.set_backward(is_reverse);
@@ -70,7 +86,7 @@ inline Visit to_visit(const Snarl& snarl) {
     return to_return;
 }
 
-inline Visit to_visit(const handlegraph::HandleGraph& graph, const handle_t& handle) {
+inline Visit to_visit(const HandleGraph& graph, const handle_t& handle) {
     return to_visit(graph.get_id(handle), graph.get_is_reverse(handle));
 }
     

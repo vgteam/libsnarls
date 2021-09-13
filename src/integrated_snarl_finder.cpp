@@ -1844,7 +1844,7 @@ void IntegratedSnarlFinder::traverse_computed_decomposition(MergedAdjacencyGraph
 
 SnarlManager IntegratedSnarlFinder::find_snarls_parallel() {
 
-    vector<unordered_set<id_t>> weak_components = handlealgs::weakly_connected_components(graph);
+    vector<unordered_set<nid_t>> weak_components = handlealgs::weakly_connected_components(graph);
     vector<SnarlManager> snarl_managers(weak_components.size());
 
     #pragma omp parallel for schedule(dynamic, 1)

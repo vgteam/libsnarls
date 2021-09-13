@@ -1,3 +1,5 @@
+#include "snarls/snarl.hpp"
+
 #include "snarls/visit.hpp"
 
 namespace snarls {
@@ -9,7 +11,7 @@ using namespace handlegraph;
 
 edge_t to_edge(const HandleGraph& graph, const Visit& v1, const Visit& v2) {
 
-    id_t prev_id;
+    nid_t prev_id;
     bool prev_back;
     if (v1.node_id() != 0) {
         prev_id = v1.node_id();
@@ -25,7 +27,7 @@ edge_t to_edge(const HandleGraph& graph, const Visit& v1, const Visit& v2) {
         }
     }
     
-    id_t cur_id;
+    nid_t cur_id;
     bool cur_back;                
     if (v2.node_id() != 0) {
         cur_id = v2.node_id();
@@ -45,6 +47,12 @@ edge_t to_edge(const HandleGraph& graph, const Visit& v1, const Visit& v2) {
                              graph.get_handle(cur_id, cur_back));
 
 }
+
+}
+
+namespace vg {
+
+using namespace std;
 
 bool operator==(const Visit& a, const Visit& b) {
     // IDs and orientations have to match, and nobody has a snarl or the
