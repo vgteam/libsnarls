@@ -34,9 +34,10 @@ endif()
 # The install_name gets modified on installation to be this.
 set (CMAKE_INSTALL_NAME_DIR "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}")
 
-# libhandlegraph (full build using its cmake config)
-# Produces handlegraph_shared and handlegraph_static targets (as well as handlegraph_objs)
-add_subdirectory("${bdsg_DIR}/deps/libhandlegraph")
+# libvgio (full build using its cmake config)
+# Produces VGio::vgio and VGio::vgio_static targets.
+# Comes along with libhandlegraph, which it depends on.
+add_subdirectory("deps/libvgio")
 
 add_library(snarls_objs OBJECT
     src/chain.cpp
@@ -65,7 +66,7 @@ set(snarls_INCLUDES
 
 # Targets we depend on that are real library targets that we can install.
 set(snarls_TARGET_DEPS
-  handlegraph_shared
+  VGio::vgio
 )
 
 # Libs should be the dependency targets and any extra per-platform lib flags
@@ -81,8 +82,8 @@ set_target_properties(snarls_objs PROPERTIES POSITION_INDEPENDENT_CODE TRUE)
 
 if (CMAKE_MAJOR_VERSION EQUAL "3" AND (CMAKE_MINOR_VERSION EQUAL "10" OR CMAKE_MINOR_VERSION EQUAL "11"))
     # Before CMake 3.12 we can't ise target_link_libraries on an object library to convey the need to use depencies' include directories
-    get_target_property(handlegraph_INCLUDE handlegraph_shared INTERFACE_INCLUDE_DIRECTORIES)
-    target_include_directories(snarls_objs PUBLIC ${handlegraph_INCLUDE})
+    get_target_property(vgio_INCLUDE VGio::vgio INTERFACE_INCLUDE_DIRECTORIES)
+    target_include_directories(snarls_objs PUBLIC ${vgio_INCLUDE})
 else()
     # Set all the libs as public dependencies of the object library
     target_link_libraries(snarls_objs PUBLIC ${snarls_LIBS})
@@ -103,7 +104,7 @@ set_target_properties(snarls_shared PROPERTIES POSITION_INDEPENDENT_CODE TRUE)
 # Make sure we can find our dependency libraries after installation, if we aren't installing into the system search path
 set_target_properties(snarls_shared PROPERTIES INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}")
 target_include_directories(snarls_shared INTERFACE "${CMAKE_CURRENT_SOURCE_DIR}/src/include")
-add_library(snarls_static STATIC $<TARGET_OBJECTS:handlegraph_objs>)
+add_library(snarls_static STATIC $<TARGET_OBJECTS:snarls_objs>)
 set_target_properties(snarls_static PROPERTIES OUTPUT_NAME snarls)
 target_include_directories(snarls_static INTERFACE "${CMAKE_CURRENT_SOURCE_DIR}/src/include")
 
