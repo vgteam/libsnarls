@@ -5,7 +5,7 @@ cmake_minimum_required(VERSION 3.10)
 include(GNUInstallDirs)
 
 # Project's name
-project(libhandlegraph)
+project(libsnarls)
 # We build using c++14
 set(CMAKE_CXX_STANDARD 14)
 
@@ -21,104 +21,106 @@ if(CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
     # an absolute path instead. This will let us actually find the library when
     # we use it as a CMake external project and don't fully install it to any
     # normal lib directory.
-    message("libhandlegraph is root project or external_project")
+    message("libsnarls is root project or external_project")
     set (CMAKE_MACOSX_RPATH OFF)
 else()
     # We are probably an add_subdirectory. We will expect to be in the root
     # project's lib directory, so we do want to have our non-installed
     # install_name use @rpath.
-    message("libhandlegraph is add_subdirectory project")
+    message("libsnarls is add_subdirectory project")
     set (CMAKE_MACOSX_RPATH ON)
 endif()
 
 # The install_name gets modified on installation to be this.
 set (CMAKE_INSTALL_NAME_DIR "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}")
 
-add_library(handlegraph_objs OBJECT
-  src/deletable_handle_graph.cpp
-  src/handle_graph.cpp
-  src/mutable_handle_graph.cpp
-  src/path_handle_graph.cpp 
-  src/path_position_handle_graph.cpp
-  src/ranked_handle_graph.cpp
-  src/serializable.cpp
-  src/snarl_decomposition.cpp
-  src/trivially_serializable.cpp
-  src/types.cpp
-  src/copy_graph.cpp
-  src/append_graph.cpp
-  src/are_equivalent.cpp
-  src/find_tips.cpp
-  src/topological_sort.cpp
-  src/apply_orientations.cpp
-  src/is_single_stranded.cpp
-  src/count_walks.cpp
-  src/eades_algorithm.cpp
-  src/dagify.cpp
-  src/strongly_connected_components.cpp
-  src/find_shortest_paths.cpp
-  src/dijkstra.cpp
-  src/is_acyclic.cpp
-  src/reverse_complement.cpp
-  src/split_strands.cpp
-  src/chop.cpp
-  src/weakly_connected_components.cpp
-  src/extend.cpp
-  src/include/handlegraph/handle_graph.hpp
-  src/include/handlegraph/mutable_handle_graph.hpp
-  src/include/handlegraph/deletable_handle_graph.hpp
-  src/include/handlegraph/path_handle_graph.hpp
-  src/include/handlegraph/path_position_handle_graph.hpp
-  src/include/handlegraph/mutable_path_handle_graph.hpp
-  src/include/handlegraph/mutable_path_mutable_handle_graph.hpp
-  src/include/handlegraph/mutable_path_deletable_handle_graph.hpp
-  src/include/handlegraph/expanding_overlay_graph.hpp
-  src/include/handlegraph/util.hpp
-  src/include/handlegraph/types.hpp
-  src/include/handlegraph/iteratee.hpp
-  src/include/handlegraph/algorithms/copy_graph.hpp
-  src/include/handlegraph/algorithms/append_graph.hpp
-  src/include/handlegraph/algorithms/are_equivalent.hpp
-  src/include/handlegraph/algorithms/find_tips.hpp
-  src/include/handlegraph/algorithms/topological_sort.hpp
-  src/include/handlegraph/algorithms/apply_orientations.hpp
-  src/include/handlegraph/algorithms/is_single_stranded.hpp
-  src/include/handlegraph/algorithms/count_walks.hpp
-  src/include/handlegraph/algorithms/eades_algorithm.hpp
-  src/include/handlegraph/algorithms/dagify.hpp
-  src/include/handlegraph/algorithms/strongly_connected_components.hpp
-  src/include/handlegraph/algorithms/find_shortest_paths.hpp
-  src/include/handlegraph/algorithms/dijkstra.hpp
-  src/include/handlegraph/algorithms/reverse_complement.hpp
-  src/include/handlegraph/algorithms/is_acyclic.hpp
-  src/include/handlegraph/algorithms/split_strands.hpp
-  src/include/handlegraph/algorithms/chop.hpp
-  src/include/handlegraph/algorithms/weakly_connected_components.hpp
-  src/include/handlegraph/algorithms/extend.hpp
+# libhandlegraph (full build using its cmake config)
+# Produces handlegraph_shared and handlegraph_static targets (as well as handlegraph_objs)
+add_subdirectory("${bdsg_DIR}/deps/libhandlegraph")
+
+add_library(snarls_objs OBJECT
+    src/chain.cpp
+    src/snarl.cpp
+    src/visit.cpp
+    src/snarl_finder.cpp
+    src/net_graph.cpp
+    src/handle_graph_snarl_finder.cpp
+    src/snarl_manager.cpp
+    src/integrated_snarl_finder.cpp
+    src/snarl_traversal.cpp  
+    src/include/snarls/visit.hpp
+    src/include/snarls/snarl_traversal.hpp
+    src/include/snarls/snarl_manager.hpp
+    src/include/snarls/snarl.hpp
+    src/include/snarls/chain.hpp
+    src/include/snarls/handle_graph_snarl_finder.hpp
+    src/include/snarls/snarl_finder.hpp
+    src/include/snarls/integrated_snarl_finder.hpp
+    src/include/snarls/net_graph.hpp
   )
+  
+set(snarls_INCLUDES
+  "src/include"
+)
+
+# Targets we depend on that are real library targets that we can install.
+set(snarls_TARGET_DEPS
+  handlegraph_shared
+)
+
+# Libs should be the dependency targets and any extra per-platform lib flags
+set(snarls_LIBS
+  ${snarls_TARGET_DEPS}
+  ${PLATFORM_EXTRA_LIB_FLAGS}
+)
+
+# Use the include directory when building the objects.
+target_include_directories(snarls_objs PUBLIC ${snarls_INCLUDES})
+# Build objects position-independent to allow a shared library
+set_target_properties(snarls_objs PROPERTIES POSITION_INDEPENDENT_CODE TRUE)
+
+if (CMAKE_MAJOR_VERSION EQUAL "3" AND (CMAKE_MINOR_VERSION EQUAL "10" OR CMAKE_MINOR_VERSION EQUAL "11"))
+    # Before CMake 3.12 we can't ise target_link_libraries on an object library to convey the need to use depencies' include directories
+    get_target_property(handlegraph_INCLUDE handlegraph_shared INTERFACE_INCLUDE_DIRECTORIES)
+    target_include_directories(snarls_objs PUBLIC ${handlegraph_INCLUDE})
+else()
+    # Set all the libs as public dependencies of the object library
+    target_link_libraries(snarls_objs PUBLIC ${snarls_LIBS})
+endif()
 
 # Use the include directory when building the objects.
 # It can't be picked up via dependency by the other libraries even if it's public.
-target_include_directories(handlegraph_objs PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/src/include")
+target_include_directories(snarls_objs PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/src/include")
 
 # Build objects position-independent to allow a shared library
-set_target_properties(handlegraph_objs PROPERTIES POSITION_INDEPENDENT_CODE TRUE)
+set_target_properties(snarls_objs PROPERTIES POSITION_INDEPENDENT_CODE TRUE)
 
 # Make static and shared versions with the same base name.
 # Make sure to give them interface include directories that depending targets can use.
-add_library(handlegraph_shared SHARED $<TARGET_OBJECTS:handlegraph_objs>)
-set_target_properties(handlegraph_shared PROPERTIES OUTPUT_NAME handlegraph)
-target_include_directories(handlegraph_shared INTERFACE "${CMAKE_CURRENT_SOURCE_DIR}/src/include")
-add_library(handlegraph_static STATIC $<TARGET_OBJECTS:handlegraph_objs>)
-set_target_properties(handlegraph_static PROPERTIES OUTPUT_NAME handlegraph)
-target_include_directories(handlegraph_static INTERFACE "${CMAKE_CURRENT_SOURCE_DIR}/src/include")
+add_library(snarls_shared SHARED $<TARGET_OBJECTS:snarls_objs>)
+set_target_properties(snarls_shared PROPERTIES OUTPUT_NAME snarls)
+set_target_properties(snarls_shared PROPERTIES POSITION_INDEPENDENT_CODE TRUE)
+# Make sure we can find our dependency libraries after installation, if we aren't installing into the system search path
+set_target_properties(snarls_shared PROPERTIES INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}")
+target_include_directories(snarls_shared INTERFACE "${CMAKE_CURRENT_SOURCE_DIR}/src/include")
+add_library(snarls_static STATIC $<TARGET_OBJECTS:handlegraph_objs>)
+set_target_properties(snarls_static PROPERTIES OUTPUT_NAME snarls)
+target_include_directories(snarls_static INTERFACE "${CMAKE_CURRENT_SOURCE_DIR}/src/include")
+
+# On older CMake, libraries weren't added as dependencies of the object library
+# (which is not yet possible) so we need to add them as dependencies of the
+# actual library. On Mac, we always need to do this, because you can't link a
+# library there without the libraries it depends on at runtime.
+target_link_libraries(snarls_shared PUBLIC ${snarls_LIBS})
+target_link_libraries(snarls_static PUBLIC ${snarls_LIBS})
 
 # Set up for installability
-install(TARGETS handlegraph_shared handlegraph_static 
+install(TARGETS snarls_shared snarls_static 
   RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
   LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-  ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})
-install(DIRECTORY src/include/handlegraph
+  ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+)
+install(DIRECTORY src/include/snarls
   DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
   FILES_MATCHING PATTERN "*.hpp"
-  )
+)

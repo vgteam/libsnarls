@@ -4,19 +4,21 @@
 ///  Defines a widget for finding snarls using an internal implementation of Cactus graphs over HandleGraphs
 ///
 
-#ifndef VG_INTEGRATED_SNARL_FINDER_HPP_INCLUDED
-#define VG_INTEGRATED_SNARL_FINDER_HPP_INCLUDED
+#ifndef LIBSNARLS_INTEGRATED_SNARL_FINDER_HPP_INCLUDED
+#define LIBSNARLS_INTEGRATED_SNARL_FINDER_HPP_INCLUDED
 
-#include "snarls.hpp"
+#include "snarls/handle_graph_snarl_finder.hpp"
 
 #include <functional>
 #include <vector>
 #include <unordered_map>
 #include <utility>
 
-namespace vg {
+namespace snarls {
 
 using namespace std;
+using namespace vg;
+using namespace handlegraph;
 
 
 /**
