@@ -2,6 +2,9 @@
 #include "snarls/snarl_manager.hpp"
 #include "snarls/net_graph.hpp"
 
+#include <handlegraph/algorithms/is_directed_acyclic.hpp>
+#include <handlegraph/algorithms/find_tips.hpp>
+
 namespace snarls {
 
 using namespace std;
@@ -196,7 +199,7 @@ SnarlManager HandleGraphSnarlFinder::find_snarls_unindexed() {
         NetGraph flat_net_graph(snarl.start(), snarl.end(), managed_child_chains, graph);
         
         // Having internal tips in the net graph disqualifies a snarl from being an ultrabubble
-        auto tips = handlealgs::find_tips(&flat_net_graph);
+        auto tips = handlegraph::algorithms::find_tips(&flat_net_graph);
 
 #ifdef debug
         cerr << "Tips: " << endl;
@@ -214,7 +217,7 @@ SnarlManager HandleGraphSnarlFinder::find_snarls_unindexed() {
         /////
     
         // This definitely should be calculated based on the internal-connectivity-ignoring net graph.
-        snarl.set_directed_acyclic_net_graph(handlealgs::is_directed_acyclic(&flat_net_graph));
+        snarl.set_directed_acyclic_net_graph(handlegraph::algorithms::is_directed_acyclic(&flat_net_graph));
 
         /////
         // Determine classification

@@ -1,5 +1,8 @@
 #include "snarls/net_graph.hpp"
 
+#include <list>
+#include <queue>
+
 namespace snarls {
 
 using namespace std;

@@ -39,6 +39,14 @@ set (CMAKE_INSTALL_NAME_DIR "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}")
 # Comes along with libhandlegraph, which it depends on.
 add_subdirectory("deps/libvgio")
 
+# libbdsg (full build using its cmake config)
+# We need it for a few overlays and overlay helpers used for the IntegratedSnarlFinder.
+# Produces libbdsg target, dyunamic only.
+# Comes along with its *own* libhandlegraph, which it depends on.
+set(BUILD_PYTHON_BINDINGS OFF)
+set(RUN_DOXYGEN OFF)
+add_subdirectory("deps/libbdsg")
+
 add_library(snarls_objs OBJECT
     src/chain.cpp
     src/snarl.cpp
@@ -48,19 +56,9 @@ add_library(snarls_objs OBJECT
     src/handle_graph_snarl_finder.cpp
     src/snarl_manager.cpp
     src/integrated_snarl_finder.cpp
-    src/snarl_traversal.cpp  
-    src/include/snarls/visit.hpp
-    src/include/snarls/snarl_traversal.hpp
-    src/include/snarls/snarl_manager.hpp
-    src/include/snarls/snarl.hpp
-    src/include/snarls/chain.hpp
-    src/include/snarls/handle_graph_snarl_finder.hpp
-    src/include/snarls/snarl_finder.hpp
-    src/include/snarls/integrated_snarl_finder.hpp
-    src/include/snarls/net_graph.hpp
-    src/include/snarls/pair_hash.hpp
-    src/include/snarls/vg_types.hpp
-  )
+    src/snarl_traversal.cpp
+    src/algorithms/three_edge_connected_components.cpp
+)
   
 set(snarls_INCLUDES
   "src/include"

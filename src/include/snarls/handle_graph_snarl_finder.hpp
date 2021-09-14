@@ -4,11 +4,12 @@
 #include <handlegraph/handle_graph.hpp>
 
 #include <functional>
+#include <list>
+#include <queue>
 
 namespace snarls {
 
 using namespace std;
-using namespace vg;
 using namespace handlegraph;
 
 class SnarlManager;

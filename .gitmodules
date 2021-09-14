@@ -1,3 +1,6 @@
 [submodule "deps/libvgio"]
 	path = deps/libvgio
 	url = https://github.com/vgteam/libvgio.git
+[submodule "deps/libbdsg"]
+	path = deps/libbdsg
+	url = https://github.com/vgteam/libbdsg.git
