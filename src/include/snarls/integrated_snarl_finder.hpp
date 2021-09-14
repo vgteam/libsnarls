@@ -17,7 +17,6 @@
 namespace snarls {
 
 using namespace std;
-using namespace vg;
 using namespace handlegraph;
 
 

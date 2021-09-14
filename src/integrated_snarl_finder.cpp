@@ -10,7 +10,7 @@
 #include <array>
 #include <iostream>
 
-namespace vg {
+namespace snarls {
 
 //#define debug
 
