@@ -41,11 +41,17 @@ add_subdirectory("deps/libvgio")
 
 # libbdsg (full build using its cmake config)
 # We need it for a few overlays and overlay helpers used for the IntegratedSnarlFinder.
-# Produces libbdsg target, dyunamic only.
+# Produces libbdsg target, dynamic only.
 # Comes along with its *own* libhandlegraph, which it depends on.
-set(BUILD_PYTHON_BINDINGS OFF)
-set(RUN_DOXYGEN OFF)
+# Make sure to never build its Python bindings.
+set(BUILD_PYTHON_BINDINGS OFF CACHE BOOL "Build Python bindings for libbdsg" FORCE)
+set(RUN_DOXYGEN OFF CACHE BOOL "Run libbdsg Doxygen" FORCE)
 add_subdirectory("deps/libbdsg")
+
+# structures (full build using its cmake config)
+# We need it for the union-find used for the IntegratedSnarlFinder.
+# Produces a structures_static and a structures_shared, as well as a structures_objs
+add_subdirectory("deps/structures")
 
 add_library(snarls_objs OBJECT
     src/chain.cpp
@@ -67,6 +73,8 @@ set(snarls_INCLUDES
 # Targets we depend on that are real library targets that we can install.
 set(snarls_TARGET_DEPS
   VGio::vgio
+  libbdsg
+  structures_shared
 )
 
 # Libs should be the dependency targets and any extra per-platform lib flags
@@ -81,7 +89,7 @@ target_include_directories(snarls_objs PUBLIC ${snarls_INCLUDES})
 set_target_properties(snarls_objs PROPERTIES POSITION_INDEPENDENT_CODE TRUE)
 
 if (CMAKE_MAJOR_VERSION EQUAL "3" AND (CMAKE_MINOR_VERSION EQUAL "10" OR CMAKE_MINOR_VERSION EQUAL "11"))
-    # Before CMake 3.12 we can't ise target_link_libraries on an object library to convey the need to use depencies' include directories
+    # Before CMake 3.12 we can't use target_link_libraries on an object library to convey the need to use depencies' include directories
     get_target_property(vgio_INCLUDE VGio::vgio INTERFACE_INCLUDE_DIRECTORIES)
     target_include_directories(snarls_objs PUBLIC ${vgio_INCLUDE})
 else()

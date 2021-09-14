@@ -4,3 +4,6 @@
 [submodule "deps/libbdsg"]
 	path = deps/libbdsg
 	url = https://github.com/vgteam/libbdsg.git
+[submodule "deps/structures"]
+	path = deps/structures
+	url = https://github.com/vgteam/structures.git

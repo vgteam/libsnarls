@@ -1,11 +1,11 @@
-#ifndef VG_ALGORITHMS_THREE_EDGE_CONNECTED_COMPONENTS_HPP_INCLUDED
-#define VG_ALGORITHMS_THREE_EDGE_CONNECTED_COMPONENTS_HPP_INCLUDED
+#ifndef SNARLS_ALGORITHMS_THREE_EDGE_CONNECTED_COMPONENTS_HPP_INCLUDED
+#define SNARLS_ALGORITHMS_THREE_EDGE_CONNECTED_COMPONENTS_HPP_INCLUDED
 
 #include <functional>
 #include <vector>
 #include <unordered_map>
 
-namespace vg {
+namespace snarls {
 namespace algorithms {
 
 using namespace std;

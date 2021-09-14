@@ -1,6 +1,8 @@
 #ifndef LIBSNARLS_HANDLE_GRAPH_SNARL_FINDER_HPP_INCLUDED
 #define LIBSNARLS_HANDLE_GRAPH_SNARL_FINDER_HPP_INCLUDED
 
+#include "snarls/snarl_finder.hpp"
+
 #include <handlegraph/handle_graph.hpp>
 
 #include <functional>

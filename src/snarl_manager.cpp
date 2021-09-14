@@ -1,4 +1,11 @@
 #include "snarls/snarl_manager.hpp"
+#include "snarls/visit.hpp"
+#include "snarls/snarl.hpp"
+
+#include <vg/io/protobuf_iterator.hpp>
+#include <vg/io/protobuf_emitter.hpp>
+
+#include <list>
 
 namespace snarls {
 
@@ -477,8 +484,8 @@ void SnarlManager::build_indexes() {
         snarl_into[make_pair(snarl.start().node_id(), snarl.start().backward())] = &snarl;
         snarl_into[make_pair(snarl.end().node_id(), !snarl.end().backward())] = &snarl;
 #ifdef debug
-        cerr << snarl.start().node_id() << " " << snarl.start().backward() << " reads into " << pb2json(snarl) << endl;
-        cerr << snarl.end().node_id() << " " << !snarl.end().backward() << " reads into " << pb2json(snarl) << endl;
+        cerr << snarl.start().node_id() << " " << snarl.start().backward() << " reads into " << to_string(snarl) << endl;
+        cerr << snarl.end().node_id() << " " << !snarl.end().backward() << " reads into " << to_string(snarl) << endl;
 #endif
     }
     
@@ -487,7 +494,7 @@ void SnarlManager::build_indexes() {
         Snarl& snarl = *unrecord(&rec);
             
 #ifdef debug
-        cerr << pb2json(snarl) << endl;
+        cerr << to_string(snarl) << endl;
 #endif
             
         // is this a top-level snarl?
@@ -941,7 +948,7 @@ const Snarl* SnarlManager::manage(const Snarl& not_owned) const {
     if (it == snarl_into.end()) {
         // It's not there. Someone is trying to manage a snarl we don't
         // really own. Complain.
-        throw runtime_error("Unable to find snarl " +  pb2json(not_owned) + " in SnarlManager");
+        throw runtime_error("Unable to find snarl " +  to_string(not_owned) + " in SnarlManager");
     }
         
     // Return the official copy of that snarl
@@ -958,28 +965,28 @@ vector<Visit> SnarlManager::visits_right(const Visit& visit, const HandleGraph& 
     vector<Visit> to_return;
         
     // Find the right side of the visit we're on
-    NodeSide right_side = to_right_side(visit);
+    pair<nid_t, bool> right_side = to_right_side(visit);
         
     if (visit.node_id() == 0) {
         // We're leaving a child snarl, so we are going to need to check if
         // another child snarl shares this boundary node in the direction
         // we're going.
             
-        const Snarl* child = into_which_snarl(right_side.node, !right_side.is_end);
+        const Snarl* child = into_which_snarl(right_side.first, !right_side.second);
         if (child != nullptr && child != in_snarl
-            && into_which_snarl(right_side.node, right_side.is_end) != in_snarl) {
+            && into_which_snarl(right_side.first, right_side.second) != in_snarl) {
             // We leave the one child and immediately enter another!
                 
             // Make a visit to it
             Visit child_visit;
             transfer_boundary_info(*child, *child_visit.mutable_snarl());
                 
-            if (right_side.node == child->end().node_id()) {
+            if (right_side.first == child->end().node_id()) {
                 // We came in its end
                 child_visit.set_backward(true);
             } else {
                 // We should have come in its start
-                assert(right_side.node == child->start().node_id());
+                assert(right_side.first == child->start().node_id());
             }
                 
             // Bail right now, so we don't try to explore inside this child snarl.
@@ -990,24 +997,24 @@ vector<Visit> SnarlManager::visits_right(const Visit& visit, const HandleGraph& 
             
     }
 
-    graph.follow_edges(graph.get_handle(right_side.node), !right_side.is_end, [&](const handle_t& next_handle) {
+    graph.follow_edges(graph.get_handle(right_side.first), !right_side.second, [&](const handle_t& next_handle) {
         // For every NodeSide attached to the right side of this visit
-        NodeSide attached(graph.get_id(next_handle), right_side.is_end ? graph.get_is_reverse(next_handle) : !graph.get_is_reverse(next_handle));
+        pair<nid_t, bool> attached = make_pair(graph.get_id(next_handle), right_side.second ? graph.get_is_reverse(next_handle) : !graph.get_is_reverse(next_handle));
             
 #ifdef debug
-        cerr << "\tFind NodeSide " << attached << endl;
+        cerr << "\tFind NodeSide " << attached.first << "," << attached.second << endl;
 #endif
             
-        const Snarl* child = into_which_snarl(attached.node, attached.is_end);
+        const Snarl* child = into_which_snarl(attached.first, attached.second);
         if (child != nullptr && child != in_snarl
-            && into_which_snarl(attached.node, !attached.is_end) != in_snarl) {
+            && into_which_snarl(attached.first, !attached.second) != in_snarl) {
             // We're reading into a child
                 
 #ifdef debug
             cerr << "\t\tGoes to Snarl " << *child << endl;
 #endif
                 
-            if (attached.node == child->start().node_id()) {
+            if (attached.first == child->start().node_id()) {
                 // We're reading into the start of the child
                     
                 // Make a visit to the child snarl
@@ -1020,7 +1027,7 @@ vector<Visit> SnarlManager::visits_right(const Visit& visit, const HandleGraph& 
                     
                 // Put it in in the forward orientation
                 to_return.push_back(child_visit);
-            } else if (attached.node == child->end().node_id()) {
+            } else if (attached.first == child->end().node_id()) {
                 // We're reading into the end of the child
                     
                 // Make a visit to the child snarl
@@ -1036,14 +1043,14 @@ vector<Visit> SnarlManager::visits_right(const Visit& visit, const HandleGraph& 
                 to_return.push_back(child_visit);
             } else {
                 // Should never happen
-                throw runtime_error("Read into child " + pb2json(*child) + " with non-matching traversal");
+                throw runtime_error("Read into child " + to_string(*child) + " with non-matching traversal");
             }
         } else {
             // We just go into a normal node
             to_return.emplace_back();
             Visit& next_visit = to_return.back();
-            next_visit.set_node_id(attached.node);
-            next_visit.set_backward(attached.is_end);
+            next_visit.set_node_id(attached.first);
+            next_visit.set_backward(attached.second);
             
 #ifdef debug
             cerr << "\t\tProduces Visit " << to_return.back() << endl;

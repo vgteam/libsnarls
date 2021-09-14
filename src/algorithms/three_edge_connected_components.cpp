@@ -1,10 +1,4 @@
-#include "three_edge_connected_components.hpp"
-
-extern "C" {
-#include "sonLib/sonLibList.h"
-#include "sonLib/sonLibTuples.h"
-#include "sonLib/3_Absorb3edge2x.h"
-}
+#include "snarls/algorithms/three_edge_connected_components.hpp"
 
 #include <structures/union_find.hpp>
 
@@ -15,7 +9,7 @@ extern "C" {
 
 //#define debug
 
-namespace vg {
+namespace snarls {
 namespace algorithms {
 
 using namespace std;

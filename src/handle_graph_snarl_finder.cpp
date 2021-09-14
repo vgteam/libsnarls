@@ -2,7 +2,7 @@
 #include "snarls/snarl_manager.hpp"
 #include "snarls/net_graph.hpp"
 
-#include <handlegraph/algorithms/is_directed_acyclic.hpp>
+#include <handlegraph/algorithms/is_acyclic.hpp>
 #include <handlegraph/algorithms/find_tips.hpp>
 
 namespace snarls {

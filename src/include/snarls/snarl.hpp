@@ -4,6 +4,9 @@
 #include "snarls/visit.hpp"
 #include "snarls/vg_types.hpp"
 
+#include <iostream>
+#include <sstream>
+
 namespace snarls {
 
 using namespace std;
@@ -11,6 +14,9 @@ using namespace vg;
     
 /// Copies the boundary Visits from one Snarl into another
 inline void transfer_boundary_info(const Snarl& from, Snarl& to);
+
+/// Convert a Snarl to a printable string
+inline string to_string(const Snarl& snarl);
 
 }
 
@@ -56,6 +62,12 @@ using namespace vg;
 inline void transfer_boundary_info(const Snarl& from, Snarl& to) {
     *to.mutable_start() = from.start();
     *to.mutable_end() = from.end();
+}
+
+inline string to_string(const Snarl& snarl) {
+    stringstream ss;
+    ss << snarl;
+    return ss.str();
 }
 
 }
