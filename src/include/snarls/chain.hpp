@@ -1,7 +1,7 @@
 #ifndef LIBSNARLS_CHAIN_HPP_INCLUDED
 #define LIBSNARLS_CHAIN_HPP_INCLUDED
 
-#include <vg/vg.pb.h>
+#include "snarls/vg_types.hpp"
 
 #include <vector>
 #include <utility>

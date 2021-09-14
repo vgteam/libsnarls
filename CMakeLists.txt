@@ -58,6 +58,8 @@ add_library(snarls_objs OBJECT
     src/include/snarls/snarl_finder.hpp
     src/include/snarls/integrated_snarl_finder.hpp
     src/include/snarls/net_graph.hpp
+    src/include/snarls/pair_hash.hpp
+    src/include/snarls/vg_types.hpp
   )
   
 set(snarls_INCLUDES

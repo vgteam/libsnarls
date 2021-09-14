@@ -2,10 +2,9 @@
 #define LIBSNARLS_NET_GRAPH_HPP_INCLUDED
 
 #include "snarls/chain.hpp"
+#include "snarls/vg_types.hpp"
 
 #include <handlegraph/handle_graph.hpp>
-
-#include <vg/vg.pb.h>
 
 #include <unordered_set>
 #include <unordered_map>

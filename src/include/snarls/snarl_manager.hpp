@@ -2,8 +2,7 @@
 #define LIBSNARLS_SNARL_MANAGER_HPP_INCLUDED
 
 #include "snarls/net_graph.hpp"
-
-#include <vg/vg.pb.h>
+#include "snarls/vg_types.hpp"
 
 #include <iostream>
 #include <vector>

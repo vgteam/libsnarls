@@ -41,6 +41,16 @@ ostream& operator<<(ostream& out, const Snarl& snarl) {
 
 }
 
+namespace std {
+
+size_t hash<const vg::Snarl>::operator()(const vg::Snarl& snarl) const {
+    auto hsh = hash<pair<pair<int64_t, bool>, pair<int64_t, bool> > >();
+    return hsh(make_pair(make_pair(snarl.start().node_id(), snarl.start().backward()),
+                         make_pair(snarl.end().node_id(), snarl.end().backward())));
+}
+
+}
+
 
 
 

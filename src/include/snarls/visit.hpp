@@ -1,9 +1,9 @@
 #ifndef LIBSNARLS_VISIT_HPP_INCLUDED
 #define LIBSNARLS_VISIT_HPP_INCLUDED
 
-#include <handlegraph/handle_graph.hpp>
+#include "snarls/vg_types.hpp"
 
-#include <vg/vg.pb.h>
+#include <handlegraph/handle_graph.hpp>
 
 #include <iostream>
 

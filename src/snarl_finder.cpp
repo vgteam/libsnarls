@@ -1,3 +1,4 @@
+#include "snarls/pair_hash.hpp"
 #include "snarls/snarl_finder.hpp"
 #include "snarls/snarl_manager.hpp"
 

@@ -1,7 +1,7 @@
 #ifndef LIBSNARLS_SNARL_TRAVERSAL_HPP_INCLUDED
 #define LIBSNARLS_SNARL_TRAVERSAL_HPP_INCLUDED
 
-#include <vg/vg.pb.h>
+#include "snarls/vg_types.hpp"
 
 namespace snarls {
 
