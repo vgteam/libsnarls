@@ -1,4 +1,5 @@
 #include "snarls/integrated_snarl_finder.hpp"
+#include "snarls/snarl_manager.hpp"
 #include "snarls/algorithms/three_edge_connected_components.hpp"
 
 #include <bdsg/overlays/subgraph_overlay.hpp>
@@ -1850,7 +1851,7 @@ SnarlManager IntegratedSnarlFinder::find_snarls_parallel() {
             subgraph = graph;
         } else {
             // turn the component into a graph
-            subgraph = new SubgraphOverlay(graph, &weak_components[i]);
+            subgraph = new bdsg::SubgraphOverlay(graph, &weak_components[i]);
         }
         IntegratedSnarlFinder finder(*subgraph);
         // find the snarls without building the index

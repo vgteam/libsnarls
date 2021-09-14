@@ -1,10 +1,10 @@
 #include "snarls/snarl_traversal.hpp"
+#include "snarls/visit.hpp"
 
 namespace snarls {
 
 using namespace std;
 using namespace vg;
-using namespace handlegraph;
 
 bool operator==(const SnarlTraversal& a, const SnarlTraversal& b) {
     if (a.visit_size() != b.visit_size()) {
