@@ -78,7 +78,7 @@ snarls::SnarlManager manager = finder.find_snarls_parallel();
 The `snarls::SnarlManager` offers useful methods, such as:
  * `into_which_snarl()`, which lets you know if a node reads into a snarl in a certain direction
  * `children_of()`, which tells you the child snarls in a given snarl
- * * `top_level_snarls()`, which gives you all of the snarls that are top-level sites, with no containing parent snarls
+ * `top_level_snarls()`, which gives you all of the snarls that are top-level sites, with no containing parent snarls
  
 Currently the API is based around `const Snarl*` pointers, which point to [Protobuf Snarl objects defined by `libvgio`](https://github.com/vgteam/libvgio/blob/25e922ff8a556a233b0741617c2b88c2d41de8ed/deps/vg.proto#L254). 
 
