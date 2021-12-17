@@ -19,7 +19,7 @@ git submodule add https://github.com/vgteam/libsnarls.git
 Then you can use the CMake project as a subdirectory:
 
 ```
-add_subdirectory("deps/libvgio")
+add_subdirectory("deps/libsnarls")
 ```
 
 This will produce a shared library target `snarls_shared` and a static library target `snarls_static`. You can then tell your CMake targets to link against either one:
