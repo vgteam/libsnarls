@@ -9,6 +9,7 @@
 
 #include <cstddef>
 #include <tuple>
+#include <functional>
 
 namespace std {
 namespace
